@@ -1,0 +1,83 @@
+rvm list gemsets
+rvm use ruby-2.2.3@rails4.2.5
+
+rails new dojo_ninjas
+cd dojo_ninjas
+atom .
+	(install gems)
+bundle install
+rails g model Dojo name:string city:string state:string
+rake db:migrate
+	(check schema.rb, check ‘models’ for dojo.rb)
+rails g model Ninja first_name:string last_name:string dojo:references
+	(check schema, check ‘models’ for ninja.rb, belongs_to :dojo)
+	(…add to dojo.rb    has_many :ninjas)
+	(new terminal tab)
+rails c
+
+	(in console):
+	Hirb.enable
+	Dojo.create(name:"Coding Dojo Silicon Valley", city:"Mountain View", state:"CA")
+	Dojo.create(name:"Coding Dojo Seattle", city:"Seattle", state:"WA")
+	Dojo.create(name:"Coding Dojo New York", city:"New York", state:"NY")
+	Dojo.all
+
+1. Delete the three dojos you created (e.g. Dojo.find(1).destroy; also look up destroy_all method)
+	ex - Ninja.where(age: 0..18).destroy_all or 
+	ex - Dojo.destroy_all()statusL “inactive” or 
+	ex - delete_all
+Dojo.find(1).destroy
+Dojo.delete_all
+
+2. Create 3 additional dojos by using Dojo.new().
+	dojo1 = Dojo.new(name:"Dojo Ohio",city:"Fredsburg",state:"OH")
+	dojo1.save
+	dojo1 = Dojo.new(name:"Dojo Denver",city:"Denver",state:"CO")
+	dojo1.save
+
+	
+3. Try to create a few more dojos but without specifying some of the required fields. Make sure that the validation works and generates the errors.
+	dojo1 = Dojo.new(name:"Dojo Denver",city:"Denver")
+	dojo1.valid?
+	dojo1.errors.full_messages
+	dojo1.update(name:"Dojo Green",city:"Green",state:"WI")
+
+4. Create 3 ninjas that belong to the first dojo you created.
+	Ninja.create(first_name:"Cloud",last_name:"Blade",dojo:Dojo.first)
+	ninja1 = Ninja.new(first_name:”Schein-e”,last_name:”Shuriken”,dojo:Dojo,first)
+	Ninja.create(first_name:"Storm",last_name:"Bolt",dojo:Dojo.find(4))
+
+5. Create 3 more ninjas and have them belong to the second dojo you created.
+	Ninja.create(first_name:"Marisse",last_name:"Softfoot",dojo:Dojo.find(5))
+	…
+	…
+	…
+	
+	
+6. Create 3 more ninjas and have them belong to the third dojo you created.
+	…
+	…
+	…
+
+
+7. Make sure you understand how to get all of the ninjas for any dojo (e.g. get all the ninjas for the first dojo, second dojo, etc).
+	Ninja.first
+	Ninja.order(:last_name)
+	Dojo.first.ninjas
+	Dojo.find(5).ninjas
+	Dojo.find(5).ninjas.last
+	Dojo.find(6).ninjas.order(:first_name)
+	Dojo.last.ninjas.order(last_name: :desc)
+	Ninja.limit(2)
+	Ninja.select("first_name").where(:first_name => "Bob")
+	Ninja.select(“first_name”, “id”).where(:dojo => 4)
+
+8. How would you only retrieve the first_names of the ninjas that belong to the second dojo and order the result by created_at DESC order?
+	Dojo.find(5).ninjas.select(“first_name”, “created_at”).order(created_at: :desc)
+	
+9. Delete the second dojo. How could you adjust your model so that it automatically removes all of the ninjas associated with that dojo?
+	Dojo.find(5).destroy
+		part 2 - update the has_many :ninjas  to    has_many :ninjas, dependent: :destroy, validate => false
+			and don’t forget to reload!
+
+( and to clean up leftovers:    Ninja.where(:dojo => 4).destroy_all)
