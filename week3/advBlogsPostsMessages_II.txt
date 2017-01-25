@@ -1,0 +1,142 @@
+rvm list gemsets
+rvm use ruby-2.2.3@rails4.2.5
+
+rails new adv_blogs_posts_messages
+cd adv_blogs_posts_messages
+atom .
+bundle install
+rails g model User first_name:string last_name:string email_address:string
+rails g model Blog name:string description:text
+rails g model Post title:string content:text blog:references user:references
+rails g model Message author:string message:text post:references user:references
+rails g model Owner user:references blog:references
+
+rake db:migrate
+
+1. Create 5 users
+User.create(first_name:"Gill", last_name:"Rogers", email_address:"buck@futurepast.net")
+u1 = User.new(first_name:"Sal", last_name:"Puptrap", email_address:"puptrap@jiffypb.net")
+u1 = User.new(first_name:"Marie", last_name:”S”)
+	u1.valid?
+	u1.errors.full_messages
+	u1.update(last_name:”St. Mary”)
+	u1.valid?
+	u1.update(email_address:"ppokkss")
+	u1.valid?
+	u1.update(email_address:"frump@docoog.org")
+	u1.valid?
+	u1.save
+User.create(first_name:"Ruff", last_name:"Barkles", email_address:"Kae9@loyal1.com")
+User.create(first_name:"Lynn", last_name:"Austin", email_address:"LAustin999@fluffy.com")
+
+2. Create 5 blogs
+b = Blog.new
+	b.valid?
+	b.errors.full_messages
+	b = Blog.new(name:”Beginnings”)
+	b.valid?
+	b.errors.full_messages
+	b = Blog.new(name:"Beginnings", description:"This")
+	b.valid?
+	b.errors.full_messages
+	b.update(description:"This is actually somewhere in the middle")
+Blog.create(name:"Next Up!",description:"Transcendence from the banal to the sublime")
+Blog.create(name:"Tales Behind",description:"Leave it in the past")
+Blog.create(name:"Obstacles Intended",description:"Thwarting your own catatrophe")
+Blog.create(name:"I Give Up",description:"Exercising Shoulders")
+Blog.create(name:"Bonus Onus",description:"More Responsibility")
+
+
+3. Have the first 3 blogs be owned by the first user
+own1 = Owner.new
+	own1.valid?
+	own1 = Owner.new(user:1,blog:1)
+	own1 = Owner.new(user_id:1,blog_id:1)
+	own1.valid?
+	own1.save
+Owner.create(user_id:1,blog_id:2)
+Owner.create(user_id:1,blog_id:3)
+	** whoops - ^using foreign key^ - changed technique moving forward **
+
+4. Have the 4th blog you create be owned by the second user
+	Owner.create(user: User.find(2), blog: Blog.find(4))
+
+5. Have the 5th blog you create be owned by the last user
+	Owner.create(user: User.last, blog: Blog.find(5))
+
+6. Have the third user own all of the blogs that were created.
+	Blog.all.each{|blog| Owner.create(user: User.find(3), blog:blog)}
+
+7. Have the first user create 3 posts for the blog with an id of 2. Remember that you shouldn't do Post.create(user: User.first, blog_id: 2) but more like Post.create(user: User.first, blog: Blog.find(2)). Again, you should never reference the foreign key in Rails.
+	p1 = Post.create
+	p1.valid?
+Post.create(title:"A Response",content:"Wish fash the youyo inder them it worlds apart from green tree an dwarf harpy schools",user: User.first, blog:Blog.find(2))
+Post.create(title:"Reprise",content:"yonder the tree",user: User.first, blog:Blog.find(2))
+Post.create(title:"Retort",content:"Forgotten Pastures and smells",user: User.first, blog:Blog.find(2))
+	
+
+8. Have the second user create 5 posts for the last Blog
+	Post.create(title:"The Last Blog",content:"Part 1 with maximum chars",user: User.find(2), blog:Blog.last)
+	Post.create(title:"4 The Last Blog",content:"Part 2 with maximum chars",user: User.find(2), blog:Blog.last)
+	Post.create(title:"For The Last Blog",content:"Part 3 with maximum chars",user: User.find(2), blog:Blog.last)
+	Post.create(title:"2nd to Last for The Last Blog",content:"Part 4 with maximum chars",user: User.find(2), blog:Blog.last)
+	Post.create(title:"Last-Last for The Last Blog",content:"Part 5 with maximum chars",user: User.find(2), blog:Blog.last)
+
+
+9. Have the 3rd user create several posts for different blogs
+	Post.create(title:"Anonymous",content:"I post at random eventually",user: User.find(3), blog:Blog.find(1))
+	Post.create(title:"Sporadic",content:"I post at random eventually",user: User.find(3), blog:Blog.find(2))
+	Post.create(title:"Sporadic Title",content:"I post at random eventually",user: User.find(3), blog:Blog.find(4))
+
+10. Have the 3rd user create 2 messages for the first post created and 3 messages for the second post created
+	m = Message.create
+	m.valid?
+	m.errors.full_messages
+	m.update(author:"Ray Gunn")
+	m.update(message:"A message for this Post",post:Post.first,user:User.find(3))
+	Message.create(author:"Ray Gunn",message:"An addt'l message for this Post",post: Post.first,user: User.find(3))
+	Message.create(author:"Ray Gunn",message:"A message for this Post",post: Post.find(2),user: User.find(3))
+	Message.create(author:"Ray Gunn",message:"Yet Another message for this Post",post: Post.find(2),user: User.find(3))
+
+11. Have the 4th user create 3 messages for the last post you created
+	Message.create(author:"Ruff Barkles",message:"Message 1 for this Post",post: Post.last,user: User.find(4))
+	Message.create(author:"Ruff Barkles",message:"Message 2 for this Post",post: Post.last,user: User.find(4))
+	Message.create(author:"Ruff Barkles",message:"Message 3 for this Post",post: Post.last,user: User.find(4))
+	Message.create(author:"Ruff Barkles",message:"Message 4 for this Post",post: Post.last,user: User.find(4))
+
+12. Change the owner of the 2nd post to the last user
+	Post.find(2).update(user: User.last)
+
+13. Change the 2nd post's content to be something else
+	Post.find(2).update(content:"To be something else!!")
+
+14. Retrieve all blogs owned by the 3rd user (make this work by simply doing: User.find(3).blogs).
+	User.find(3).blogs  (has_many :owners)
+
+15. Retrieve all posts that were created by the 3rd user
+	User.find(3).posts
+
+16. Retrieve all messages left by the 3rd user
+	User.find(3).messages
+
+17. Retrieve all posts associated with the first blog as well as who left these posts.  
+	Blog.first.posts.joins(:user)
+
+	- SELECT "posts".* FROM "posts" INNER JOIN "users" ON "users"."id" = "posts"."user_id" WHERE "posts"."blog_id" = ?  [["blog_id", 1]] -
+
+18. Retrieve all messages associated with the first blog along with all the user information of those who left the messages.
+	Blog.find(2).messages.joins(:user)  -  no messages for Blog 1 (?), used Blog 2
+
+	 - SELECT "messages".* FROM "messages" INNER JOIN "users" ON "users"."id" = "messages"."user_id" INNER JOIN "posts" ON "messages"."post_id" = "posts"."id" WHERE "posts"."blog_id" = ?  [["blog_id", 2]] 
+
+19. Grab all user information of those that own the first blog (make this work by allowing Blog.first.owners to work).
+	Blog.first.owners - has_many through allows this
+	Blog.first.users  - provides more ‘visual’ details)
+
+20. Change it so that the first blog is no longer owned by the first user.
+	Owner.find_by(blog:Blog.first, user:User.first).update(user:User.find(2))
+
+
+
+
+
