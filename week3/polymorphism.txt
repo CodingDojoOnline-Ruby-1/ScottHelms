@@ -1,0 +1,35 @@
+rails g model Comment commentable:references{polymorphic}
+	- added to new Comment model:
+		belongs_to :user
+		belongs_to :blog
+		belongs_to :post
+		belongs_to :message
+  		belongs_to :commentable, polymorphic: true
+
+	- added to Blog, User, Post, and Message models:
+		has_many :comments, as: :commentable
+	
+Tests:
+	Comment.create(comment:"First Comment for User",commentable:Blog.first)
+		- to verify:  Blog.first.comments
+	Comment.create(commentable:Blog.find(2),comment:"Second comment for 2nd Blog")
+	Comment.create(commentable:User.last,comment:"A comment for the last User!")
+	Comment.create(commentable:Message.find(3),comment:"Comment for the third message")
+	Comment.create(commentable:Post.find(4),comment:"Comment for post #4")
+		- to verify: Post.find(4).comments
+	Comment.find(2).update(comment:”Comment updated!!”)
+	Comment.find(7).update(comment:"comment updated!!")
+		- to verify:  Comment.all
++----+----------------+------------------+------------------------------+-------------------------+-------------------------+
+| id | commentable_id | commentable_type | comment                      | created_at              | updated_at              |
++----+----------------+------------------+------------------------------+-------------------------+-------------------------+
+| 3  | 1              |                  |                              | 2017-01-25 23:23:32 UTC | 2017-01-25 23:23:32 UTC |
+| 4  | 1              | Blog             | First Comment for User       | 2017-01-26 17:02:55 UTC | 2017-01-26 17:02:55 UTC |
+| 5  | 2              | Blog             | Second comment for 2nd Blog  | 2017-01-26 17:05:31 UTC | 2017-01-26 17:05:31 UTC |
+| 6  | 5              | User             | A comment for the last User! | 2017-01-26 17:08:42 UTC | 2017-01-26 17:08:42 UTC |
+| 7  | 3              | Message          | comment updated!!            | 2017-01-26 17:18:10 UTC | 2017-01-26 17:23:07 UTC |
+| 8  | 4              | Post             | Comment for post #4          | 2017-01-26 17:19:07 UTC | 2017-01-26 17:19:07 UTC |
++----+----------------+------------------+------------------------------+-------------------------+-------------------------+
+		
+	Comment.find(3).destroy
+

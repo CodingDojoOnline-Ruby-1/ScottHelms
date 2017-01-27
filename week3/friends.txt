@@ -1,0 +1,53 @@
+
+rails new friends
+cd friends
+atom .
+
+rails g model User first_name:string last_name:string
+rails g model Friendship user:references friend:references
+
+User.create(first_name:"Bill",last_name:"Jackal")
+User.create(first_name:"Sill",last_name:"Krackal")
+User.create(first_name:"Will",last_name:"Mackal")
+
+
+Friendship.create(user:User.first, friend:User.find(3))
+
+User.first.friends    
+	(yikes - series of SystemStackErrors….…solution:
+		- change User model to: has_many :friendships  (remove: through: friendships)
+		- also add to class Friendship:  belongs_to :friend, class_name: “User”
+	  - even LOOKS cleaner after these changes)
+
+Friendship.create(user:User.find(3),friend:User.first)
+Friendship.create(user:User.find(3),friend:User.find(2))
+Friendship.create(user:User.find(2),friend:User.find(3))
+
+
+
+SQL-ish ? User.all - User.first.friends ??
+
+
+
+User.joins(:friends).where("friend_id != ?",User.first)
+User.select("id","first_name","last_name","friend_id").joins(:friendships).where("friend_id != ?",User.first)
+
+
+
+
+_________________________________________________
+
+For posterity:
+attempt: Friendship.where.not(:user_id=>1,:friend_id=>1)
+attempt: User.select("id","first_name","last_name","friend_id").joins(:friends).where("friend_id != ?",User.first)
+
+attempt: User.where(“friend !=?”, User.first)
+attempt: User.all.where.not(friends:User.first)
+	BEST ERROR SO FAR:
+	SQLException: no such column: users.friend_id: SELECT "users".* FROM "users" WHERE ("users"."friend_id" != 1)
+
+attempt: User.all.where.not(friends:User.first).joins(:user)
+
+attempt: User.select.friends.where.not(friends:User.first)
+	ArgumentError: Call this with at least one field
+

@@ -137,6 +137,5 @@ Post.create(title:"Retort",content:"Forgotten Pastures and smells",user: User.fi
 	Owner.find_by(blog:Blog.first, user:User.first).update(user:User.find(2))
 
 
-
-
+find_by: http://www.mitchcrowe.com/10-most-underused-activerecord-relation-methods/
 
