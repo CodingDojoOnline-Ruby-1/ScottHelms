@@ -1,0 +1,12 @@
+<h1>Guess the Number!!</h1>
+<p>Guess the random number generated between 1 and 100</p>
+<p class=""><%= flash[:msg] %></p>
+<!-- <p><%= @rand %></p> -->
+<% if @msg != "You guessed it!!"%>
+  <form class="" action="/guess_result" method="post">
+    <input type="text" name="guess" value="">
+    <%= button_to "Submit Guess", "/guess_result", :method => "post" %>
+  </form>
+<% else %>
+  <button><a href="/replay" data-method="post">Play Again?</a></button>
+<% end %>

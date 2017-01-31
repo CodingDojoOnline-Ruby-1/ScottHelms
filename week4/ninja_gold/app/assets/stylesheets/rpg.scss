@@ -1,0 +1,46 @@
+// Place all the styles related to the Rpg controller here.
+// They will automatically be included in application.css.
+// You can use Sass (SCSS) here: http://sass-lang.com/
+body{
+  font-family: verdana, sans-serif;
+}
+  #wrapper{
+    width:90%;
+    margin: auto;
+    border: 1px solid #ccc;
+    border-radius: 4px;
+    padding: 12px;
+  }
+  #wrapper h1,h3,p{
+    text-align: center;
+  }
+    .location{
+      display: inline-block;
+      width: 24%;
+      height: 200px;
+      text-align: center;
+      border: 1px solid #666;
+      border-radius: 4px;
+      background-color: #fff;
+    }
+    .message{
+      color: red;
+    }
+    #hist-tor-ee, #his-story{
+      margin: 10px auto 0 auto;
+    }
+    #hist-tor-ee{
+      padding: 5px;
+      background-color: #000;
+      border-radius: 4px;
+      width:75%;
+      height:120px;
+      overflow: scroll;
+    }
+      #his-story{
+        text-align: center;
+        color: #00cc33;
+      }
+    #clear-it{
+      margin: 5px auto;
+    }

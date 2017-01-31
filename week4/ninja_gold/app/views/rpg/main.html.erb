@@ -1,0 +1,45 @@
+<div id="wrapper">
+  <h1>Ninja Gold</h1>
+  <h3 class="message"><%= flash[:msg] %></h3>
+  <p>Your Gold: <%= session[:total] %></p>
+  <div class="location">
+    <h2>Farm</h2><p>(earns 10-20 gold pcs)</p>
+    <form class="" action="/rpg/farm" method="post">
+      <input name="authenticity_token" value="<%= form_authenticity_token %>" type="hidden">
+      <input type="submit" name="farm_gold" value="Find Gold!">
+    </form>
+  </div>
+  <div class="location">
+    <h2>Cave</h2><p>(earns 5-10 gold pcs)</p>
+    <form class="" action="/rpg/cave" method="post">
+      <input name="authenticity_token" value="<%= form_authenticity_token %>" type="hidden">
+      <input type="submit" name="cave_gold" value="Find Gold!">
+    </form>
+  </div>
+  <div class="location">
+    <h2>House</h2><p>(earns 2-5 gold pcs)</p>
+    <form class="" action="/rpg/house" method="post">
+      <input name="authenticity_token" value="<%= form_authenticity_token %>" type="hidden">
+      <input type="submit" name="house_gold" value="Find Gold!">
+    </form>
+  </div>
+  <div class="location">
+    <h2>Casino</h2><p>(earns/loses 50 gold pcs)</p>
+    <form class="" action="/rpg/casino" method="post">
+      <input name="authenticity_token" value="<%= form_authenticity_token %>" type="hidden">
+      <input type="submit" name="casino_gold" value="Gamble Gold!">
+    </form>
+  </div>
+  <div id="hist-tor-ee">
+    <%= @histored.reverse_each do |hist| %>
+      <p id="his-story"><%= hist %></p>
+    <% end %>
+  </div>
+  <p id="clear-it"><button><a href="/clear_it" data-method="post"></a></button></p>
+  <form class="clear-it" action="/rpg/clear_it" method="post">
+    <input name="authenticity_token" value="<%= form_authenticity_token %>" type="hidden">
+    <input type="submit" name="" value="Clear Everything?!?">
+  </form>
+
+</div>
+
